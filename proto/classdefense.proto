@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package classdefense;
+
+message AudioChunk {
+  bytes pcm_f32le = 1;
+  int32 sample_rate_hz = 2;
+  int32 channels = 3;
+}
+
+message ControlSignal {
+  enum SignalType {
+    SIGNAL_UNSPECIFIED = 0;
+    STALL_SIGNAL = 1;
+    ANSWER_READY = 2;
+  }
+  SignalType type = 1;
+  string message = 2;
+}
+
+service StreamService {
+  rpc StreamAudio (stream AudioChunk) returns (stream ControlSignal);
+}
