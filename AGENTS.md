@@ -1,59 +1,34 @@
-Act as an expert C++ Software Engineer and AI Architect. I am building a real-time lecture assistance system named "ClassDefense".
+Act as a Senior Backend & AI Systems Engineer. Develop the backend for "ClassDefense Web".
 
-### 1. Project Overview & Environment
-- Goal: Real-time lecture transcription, automated response for professor's questions, sleep detection, and lecture summarization.
-- Target Platforms: Client (macOS & Windows), Server (Linux/WSL2 with RTX 3090 GPU).
-- Tech Stack: 
-  - Language: C++20
-  - Build System: CMake
-  - Audio: PortAudio (Cross-platform audio I/O)
-  - Vision: OpenCV & MediaPipe (Sleep detection via EAR - Eye Aspect Ratio)
-  - UI: Dear ImGui (Transparent overlay for transcript)
-  - STT: whisper.cpp (Running on Server GPU)
-  - LLM: llama.cpp (Llama 3 8B, 8-bit quantized on Server GPU)
-  - Communication: gRPC (Low-latency streaming between Client and Server)
+### 1. Server Environment
+- Hardware: Linux Server with RTX 3090 GPU (24GB VRAM) and 40-core vCPU.
+- Tech Stack: FastAPI (Python) or Drogon (C++), gRPC/WebSockets, whisper.cpp, llama.cpp, RVC.
 
-### 2. Core Features & Logic Flow
-1. Ears (Client): Captures 16kHz Mono audio via PortAudio and streams to Server via gRPC.
-2. Brain (Server): 
-   - Converts audio to text using whisper.cpp.
-   - Monitors text for triggers: "Name (User)", "Do you know...", "Any questions?".
-   - If triggered:
-     - Immediate Action: Send 'STALL_SIGNAL' to Client.
-     - Secondary Action: Generate response using llama.cpp based on the last 5 minutes of lecture transcript.
-3. Guardian (Client): 
-   - Uses OpenCV/MediaPipe to monitor if the user is sleeping or not responding.
-   - If 'STALL_SIGNAL' is received: Play pre-recorded stalling audio (e.g., "Umm... let me think...").
-   - If user is sleeping or silent for 3 seconds after a question: Play the AI-generated answer using pre-synthesized voice (RVC).
-4. Secretary (Server): At the end of the session, summarize all transcripts into a "Exam Prep Study Note".
+### 2. Core Backend Requirements
+1. [Real-time Audio Pipeline]:
+   - Implement a WebSocket endpoint to receive binary PCM audio chunks.
+   - Use a thread-safe circular buffer to store incoming audio for the STT engine.
+   - Integrate 'whisper.cpp' as a sub-process or library to perform inference on the GPU.
 
-### 3. Task: Generate Initial Project Structure
-Please generate the following:
+2. [Intelligence & Trigger Logic]:
+   - Continuously pipe STT results into a Llama 3 8B model.
+   - Use regex-based and LLM-based detection for:
+     - User's Name (Trigger: Attendance Response)
+     - Interrogative sentences (Trigger: Stalling Audio & Answer Generation)
+   - Implement a 'Context Buffer' that stores the last 5-10 minutes of text for RAG (Retrieval-Augmented Generation).
 
-#### A. Modular Folder Structure
-Suggest a clean directory tree (e.g., /src/client, /src/server, /proto, /include, /third_party).
+3. [Autonomous Attendance & Command System]:
+   - Voice Attendance: On name detection, send a signal to the client to play local audio or stream a pre-synthesized RVC voice packet.
+   - Electronic Attendance: Implement a headless automation bridge. Upon detection of "attendance check" keywords, execute a script to log into 'KLMS' or a designated portal and perform the check-in.
 
-#### B. Comprehensive CMakeLists.txt
-- Must support macOS (Apple Silicon/Intel) and Windows.
-- Find and link: PortAudio, OpenCV, gRPC, Protobuf, and Dear ImGui.
-- Setup CPack for generating .dmg (Mac) and .exe (NSIS/Windows) installers.
+4. [Session Management & Secretary]:
+   - Handle 3-mode states: 'Note' (Idle), 'Lecture' (Transcription), 'Active FSD' (Defense & Vision status).
+   - On 'Summary' request, process the entire session log via Llama 3 to output a structured Markdown summary.
 
-#### C. Core Client Logic (main.cpp & AudioCapturer.cpp)
-- Initialize a transparent Dear ImGui overlay for the transcript.
-- Implement a thread-safe PortAudio capture loop (16kHz, Float32).
-- Setup the gRPC client stub for streaming audio to the server.
+### 3. Technical Constraints
+- High Concurrency: Leverage 40-core CPU using asynchronous I/O and thread pools.
+- Low Latency: Ensure the path from "Name Detection" to "Response Signal" is under 500ms.
+- Memory Safety: Manage GPU VRAM carefully to prevent OOM (Out of Memory) when multiple models are loaded.
 
-#### D. Core Server Logic (stt_server.cpp & TriggerEngine.cpp)
-- Implement gRPC service to receive audio chunks.
-- Setup a placeholder for whisper.cpp and llama.cpp integration.
-- Implement the 'TriggerEngine' that uses regex to detect questions and manage the 'Stalling' state.
-
-#### E. Vision & Response Handler
-- Provide C++ code for EAR calculation to detect sleep.
-- Implement the 'ResponseHandler' that manages audio playback (Stalling sound vs. AI Answer).
-
-### 4. Special Instructions
-- Use Modern C++ features (Smart pointers, std::thread, std::mutex).
-- Ensure all file paths are handled relatively for cross-platform compatibility.
-- For macOS, include necessary 'Info.plist' permission strings for Microphone and Camera.
-- Focus on minimizing latency between 'Professor Question' and 'Stalling Audio Playback'.
+### 4. Task
+Generate the 'ServerController' class that coordinates the Audio-STT-LLM pipeline and the 'AttendanceService' for automated check-ins. Provide the API/WebSocket schema for client communication.
