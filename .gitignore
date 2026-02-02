@@ -39,3 +39,26 @@
 
 # debug information files
 *.dwo
+
+*.bin
+*.gguf
+models/
+third_party/whisper.cpp/models/*.bin
+third_party/llama.cpp/models/*.gguf
+
+# AI 모델 파일 제외
+models/
+GPT_weights/
+SoVITS_weights/
+pretrained_models/
+
+# 임시 파일 및 캐시 제외
+TEMP/
+__pycache__/
+*.wav
+*.mp3
+
+samples/
+build/
+
+GPT-SoVITS/
