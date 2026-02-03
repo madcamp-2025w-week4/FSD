@@ -59,8 +59,8 @@ public:
     ) override;
 
 private:
-    // 추론 임계값 (1초 분량의 오디오 = 16000 샘플)
-    static constexpr int INFERENCE_SAMPLES = 16000;
+    // 추론 임계값 (3초 분량의 오디오 = 48000 샘플)
+    static constexpr int INFERENCE_SAMPLES = 48000;
 
     /**
      * @brief 수신된 바이너리 데이터를 int16_t 배열로 파싱

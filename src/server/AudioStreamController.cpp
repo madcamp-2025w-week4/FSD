@@ -33,8 +33,11 @@ struct ServiceConfig {
   std::string llama_base = "http://127.0.0.1:8000";
   std::string tts_base = "http://127.0.0.1:9880";
   std::string llama_model = "Qwen2.5-14B-Instruct-Q4_K_M.gguf";
-  std::string tts_ref_audio_path;
-  std::string tts_prompt_text;
+  std::string tts_ref_audio_path =
+      "/root/madcamp04/FSD/GPT-SoVITS/logs/jw_voice/5-wav32k/"
+      "1.wav_0000150720_0000298560.wav";
+  std::string tts_prompt_text =
+      "제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.";
   std::string tts_prompt_lang = "ko";
   std::string tts_text_lang = "ko";
   int64_t recent_window_ms = 10 * 60 * 1000;
@@ -249,10 +252,12 @@ void AudioStreamController::handleNewMessage(
 
       auto& cfg = GetConfig();
       if (root.isMember("tts_ref_audio_path")) {
-        cfg.tts_ref_audio_path = root["tts_ref_audio_path"].asString();
+        const std::string v = root["tts_ref_audio_path"].asString();
+        if (!v.empty()) cfg.tts_ref_audio_path = v;
       }
       if (root.isMember("tts_prompt_text")) {
-        cfg.tts_prompt_text = root["tts_prompt_text"].asString();
+        const std::string v = root["tts_prompt_text"].asString();
+        if (!v.empty()) cfg.tts_prompt_text = v;
       }
 
       wsConnPtr->send(create_info_response("control", "mode updated"));
@@ -260,13 +265,16 @@ void AudioStreamController::handleNewMessage(
     }
 
     if (msg_type == "summary") {
+      const std::string provided_text = root.get("text", "").asString();
       std::weak_ptr<drogon::WebSocketConnection> weak_conn = wsConnPtr;
-      std::thread([session, weak_conn]() {
+      std::thread([session, weak_conn, provided_text]() {
         auto conn = weak_conn.lock();
         if (!conn || !conn->connected()) return;
 
         std::string full_text;
-        {
+        if (!provided_text.empty()) {
+          full_text = provided_text;
+        } else {
           std::lock_guard<std::mutex> lock(session->lock);
           full_text = JoinText(session->full, 200000);
         }
@@ -284,13 +292,37 @@ void AudioStreamController::handleNewMessage(
         auto& cfg = GetConfig();
         auto client = drogon::HttpClient::newHttpClient(cfg.llama_base);
 
+        const std::string SYSTEM_PROMPT = R"(
+          You are a "Versatile Content Analyst" designed to support university students.
+          Your task is to summarize ANY input provided, whether it is a formal academic lecture or a casual daily conversation.
+
+          [Operational Rules]
+          1. No Refusal: You must summarize the input regardless of its nature (academic, casual, or technical). NEVER say the content is irrelevant.
+          2. Language: You MUST respond in Korean (한국어) only. If technical terms appear, you may include the English term in parentheses.
+          3. Content Filtering: Ignore stuttering, verbal fillers (uh, um, etc.), and repetitive noise from the STT transcript.
+          4. Style: Maintain a professional yet helpful tone as a dedicated assistant.
+
+          [Output Format]
+          🎓 핵심 주제 (Core Theme)
+          - (주제를 한 줄로 명확하게 정리)
+
+          📌 주요 내용 (Key Points)
+          * (강의라면 핵심 지식을, 대화라면 논의된 주요 안건이나 흐름을 요약)
+          * (중요한 세부 사항이나 결론)
+
+          💻 용어 및 키워드 (Keywords)
+          * (중요 단어): (간결한 설명)
+
+          ✍️ 한 줄 메모 (Note)
+          * (학생이 기억해야 할 실용적인 조언이나 다음 할 일)
+          )";
         auto summarize_chunk = [&](const std::string& chunk) -> std::string {
           Json::Value req;
           req["model"] = cfg.llama_model;
           Json::Value messages(Json::arrayValue);
           Json::Value system;
           system["role"] = "system";
-          system["content"] = "You summarize lecture transcripts concisely.";
+          system["content"] = SYSTEM_PROMPT;
           Json::Value user;
           user["role"] = "user";
           user["content"] = "Summarize:\n" + chunk;
@@ -447,14 +479,18 @@ void AudioStreamController::handleNewMessage(
 
           auto maybe_answer = [session, text, weak_conn]() {
             auto& cfg = GetConfig();
+            std::cout << "[TTS] maybe_answer called. ref=" << (cfg.tts_ref_audio_path.empty() ? "EMPTY" : "OK")
+                      << " prompt=" << (cfg.tts_prompt_text.empty() ? "EMPTY" : "OK") << std::endl;
             if (cfg.tts_ref_audio_path.empty() || cfg.tts_prompt_text.empty()) {
               return;
             }
             int64_t now = NowMs();
             if (now - session->last_question_ts < 3000) {
+              std::cout << "[TTS] skipped: cooldown" << std::endl;
               return;
             }
             if (session->llm_busy.exchange(true)) {
+              std::cout << "[TTS] skipped: llm_busy" << std::endl;
               return;
             }
             session->last_question_ts = now;
@@ -487,6 +523,8 @@ void AudioStreamController::handleNewMessage(
               messages.append(user);
               req["messages"] = messages;
               req["temperature"] = 0.6;
+              std::cout << "[LLM] system: " << system["content"].asString() << std::endl;
+              std::cout << "[LLM] user: " << user["content"].asString() << std::endl;
 
               auto client = drogon::HttpClient::newHttpClient(cfg.llama_base);
               auto request = drogon::HttpRequest::newHttpJsonRequest(req);
@@ -522,10 +560,13 @@ void AudioStreamController::handleNewMessage(
                   payload["error"] = "LLM answer failed";
                   conn->send(ToString(payload));
                 }
+                std::cout << "[TTS] LLM answer failed" << std::endl;
                 session->llm_busy.store(false);
                 return;
               }
 
+              std::cout << "[LLM] answer: " << answer << std::endl;
+              std::cout << "[TTS] LLM answer OK, length=" << answer.size() << std::endl;
               if (conn && conn->connected()) {
                 Json::Value payload;
                 payload["type"] = "answer";
@@ -558,6 +599,7 @@ void AudioStreamController::handleNewMessage(
                   });
 
               std::string audio_bytes = tts_promise.get_future().get();
+              std::cout << "[TTS] TTS bytes=" << audio_bytes.size() << std::endl;
               if (!audio_bytes.empty() && conn && conn->connected()) {
                 conn->send(audio_bytes, drogon::WebSocketMessageType::Binary);
               }
@@ -567,8 +609,10 @@ void AudioStreamController::handleNewMessage(
           };
 
           if (session->trigger.IsTriggered(text)) {
+            std::cout << "[Trigger] keyword matched, text: " << text << std::endl;
             maybe_answer();
           } else if (LooksAmbiguousQuestion(text) && !session->classifier_busy.exchange(true)) {
+            std::cout << "[Trigger] ambiguous question, running classifier: " << text << std::endl;
             std::thread([session, text, weak_conn, maybe_answer]() {
               auto& cfg = GetConfig();
               auto client = drogon::HttpClient::newHttpClient(cfg.llama_base);
@@ -617,6 +661,7 @@ void AudioStreamController::handleNewMessage(
               if (!decision.empty()) {
                 for (auto& c : decision) c = static_cast<char>(std::toupper(c));
                 if (decision.find("YES") != std::string::npos) {
+                  std::cout << "[Trigger] classifier YES, text: " << text << std::endl;
                   maybe_answer();
                 }
               }
