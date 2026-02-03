@@ -15,7 +15,7 @@ common_init_result: fitting params to device memory, for bugs during this step t
 llama_params_fit_impl: projected to use 14599 MiB of device memory vs. 20645 MiB of free device memory
 llama_params_fit_impl: will leave 6046 >= 1024 MiB of free device memory, no changes needed
 llama_params_fit: successfully fit params to free device memory
-llama_params_fit: fitting params to free memory took 0.61 seconds
+llama_params_fit: fitting params to free memory took 0.63 seconds
 llama_model_load_from_file_impl: using device CUDA0 (NVIDIA GeForce RTX 3090) (0000:00:05.0) - 20645 MiB free
 llama_model_loader: loaded meta data with 38 key-value pairs and 579 tensors from /root/madcamp04/FSD/models/Qwen2.5-14B-Instruct-Q4_K_M.gguf (version GGUF V3 (latest))
 llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
@@ -164,7 +164,7 @@ sched_reserve:      CUDA0 compute buffer size =   307.00 MiB
 sched_reserve:  CUDA_Host compute buffer size =    84.01 MiB
 sched_reserve: graph nodes  = 1639
 sched_reserve: graph splits = 2
-sched_reserve: reserve took 58.85 ms, sched copies = 1
+sched_reserve: reserve took 43.18 ms, sched copies = 1
 common_init_from_params: warming up the model with an empty run - please wait ... (--no-warmup to disable)
 srv    load_model: initializing slots, n_slots = 4
 no implementations specified for speculative decoding
@@ -201,121 +201,19 @@ srv  params_from_: Chat format: Hermes 2 Pro
 slot get_availabl: id  3 | task -1 | selected slot by LRU, t_last = -1
 slot launch_slot_: id  3 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
 slot launch_slot_: id  3 | task 0 | processing task, is_child = 0
-slot update_slots: id  3 | task 0 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 635
+slot update_slots: id  3 | task 0 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 147
 slot update_slots: id  3 | task 0 | n_tokens = 0, memory_seq_rm [0, end)
-slot update_slots: id  3 | task 0 | prompt processing progress, n_tokens = 635, batch.n_tokens = 635, progress = 1.000000
-slot update_slots: id  3 | task 0 | prompt done, n_tokens = 635, batch.n_tokens = 635
-slot init_sampler: id  3 | task 0 | init sampler, took 0.26 ms, tokens: text = 635, total = 635
+slot update_slots: id  3 | task 0 | prompt processing progress, n_tokens = 147, batch.n_tokens = 147, progress = 1.000000
+slot update_slots: id  3 | task 0 | prompt done, n_tokens = 147, batch.n_tokens = 147
+slot init_sampler: id  3 | task 0 | init sampler, took 0.06 ms, tokens: text = 147, total = 147
 slot print_timing: id  3 | task 0 | 
-prompt eval time =     287.39 ms /   635 tokens (    0.45 ms per token,  2209.54 tokens per second)
-       eval time =    1572.15 ms /   103 tokens (   15.26 ms per token,    65.52 tokens per second)
-      total time =    1859.54 ms /   738 tokens
-slot      release: id  3 | task 0 | stop processing: n_tokens = 737, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
-srv  params_from_: Chat format: Hermes 2 Pro
-slot get_availabl: id  2 | task -1 | selected slot by LRU, t_last = -1
-slot launch_slot_: id  2 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  2 | task 104 | processing task, is_child = 0
-slot update_slots: id  2 | task 104 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 37
-slot update_slots: id  2 | task 104 | n_tokens = 0, memory_seq_rm [0, end)
-slot update_slots: id  2 | task 104 | prompt processing progress, n_tokens = 37, batch.n_tokens = 37, progress = 1.000000
-slot update_slots: id  2 | task 104 | prompt done, n_tokens = 37, batch.n_tokens = 37
-slot init_sampler: id  2 | task 104 | init sampler, took 0.01 ms, tokens: text = 37, total = 37
-slot print_timing: id  2 | task 104 | 
-prompt eval time =      37.41 ms /    37 tokens (    1.01 ms per token,   989.07 tokens per second)
-       eval time =      22.69 ms /     2 tokens (   11.35 ms per token,    88.14 tokens per second)
-      total time =      60.10 ms /    39 tokens
-slot      release: id  2 | task 104 | stop processing: n_tokens = 38, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
-srv  params_from_: Chat format: Hermes 2 Pro
-slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, sim_best = 0.676 (> 0.100 thold), f_keep = 0.658
-slot launch_slot_: id  2 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  2 | task 107 | processing task, is_child = 0
-slot update_slots: id  2 | task 107 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 37
-slot update_slots: id  2 | task 107 | n_tokens = 25, memory_seq_rm [25, end)
-slot update_slots: id  2 | task 107 | prompt processing progress, n_tokens = 37, batch.n_tokens = 12, progress = 1.000000
-slot update_slots: id  2 | task 107 | prompt done, n_tokens = 37, batch.n_tokens = 12
-slot init_sampler: id  2 | task 107 | init sampler, took 0.02 ms, tokens: text = 37, total = 37
-slot print_timing: id  2 | task 107 | 
-prompt eval time =      32.90 ms /    12 tokens (    2.74 ms per token,   364.80 tokens per second)
-       eval time =      17.54 ms /     2 tokens (    8.77 ms per token,   114.00 tokens per second)
-      total time =      50.44 ms /    14 tokens
-slot      release: id  2 | task 107 | stop processing: n_tokens = 38, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
-srv  params_from_: Chat format: Hermes 2 Pro
-slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, sim_best = 0.595 (> 0.100 thold), f_keep = 0.658
-slot launch_slot_: id  2 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  2 | task 110 | processing task, is_child = 0
-slot update_slots: id  2 | task 110 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 42
-slot update_slots: id  2 | task 110 | n_tokens = 25, memory_seq_rm [25, end)
-slot update_slots: id  2 | task 110 | prompt processing progress, n_tokens = 42, batch.n_tokens = 17, progress = 1.000000
-slot update_slots: id  2 | task 110 | prompt done, n_tokens = 42, batch.n_tokens = 17
-slot init_sampler: id  2 | task 110 | init sampler, took 0.02 ms, tokens: text = 42, total = 42
-slot print_timing: id  2 | task 110 | 
-prompt eval time =      31.50 ms /    17 tokens (    1.85 ms per token,   539.68 tokens per second)
-       eval time =      17.76 ms /     2 tokens (    8.88 ms per token,   112.62 tokens per second)
-      total time =      49.26 ms /    19 tokens
-slot      release: id  2 | task 110 | stop processing: n_tokens = 43, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
-srv  params_from_: Chat format: Hermes 2 Pro
-slot get_availabl: id  2 | task -1 | selected slot by LCP similarity, sim_best = 0.641 (> 0.100 thold), f_keep = 0.581
-slot launch_slot_: id  2 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  2 | task 113 | processing task, is_child = 0
-slot update_slots: id  2 | task 113 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 39
-slot update_slots: id  2 | task 113 | n_tokens = 25, memory_seq_rm [25, end)
-slot update_slots: id  2 | task 113 | prompt processing progress, n_tokens = 39, batch.n_tokens = 14, progress = 1.000000
-slot update_slots: id  2 | task 113 | prompt done, n_tokens = 39, batch.n_tokens = 14
-slot init_sampler: id  2 | task 113 | init sampler, took 0.08 ms, tokens: text = 39, total = 39
-slot print_timing: id  2 | task 113 | 
-prompt eval time =      32.98 ms /    14 tokens (    2.36 ms per token,   424.56 tokens per second)
-       eval time =      16.71 ms /     2 tokens (    8.36 ms per token,   119.68 tokens per second)
-      total time =      49.69 ms /    16 tokens
-slot      release: id  2 | task 113 | stop processing: n_tokens = 40, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
-srv  params_from_: Chat format: Hermes 2 Pro
-slot get_availabl: id  1 | task -1 | selected slot by LRU, t_last = -1
-slot launch_slot_: id  1 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  1 | task 116 | processing task, is_child = 0
-slot update_slots: id  1 | task 116 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 1132
-slot update_slots: id  1 | task 116 | n_tokens = 0, memory_seq_rm [0, end)
-slot update_slots: id  1 | task 116 | prompt processing progress, n_tokens = 1132, batch.n_tokens = 1132, progress = 1.000000
-slot update_slots: id  1 | task 116 | prompt done, n_tokens = 1132, batch.n_tokens = 1132
-slot init_sampler: id  1 | task 116 | init sampler, took 0.48 ms, tokens: text = 1132, total = 1132
-slot print_timing: id  1 | task 116 | 
-prompt eval time =     457.48 ms /  1132 tokens (    0.40 ms per token,  2474.44 tokens per second)
-       eval time =    4580.53 ms /   329 tokens (   13.92 ms per token,    71.83 tokens per second)
-      total time =    5038.00 ms /  1461 tokens
-slot      release: id  1 | task 116 | stop processing: n_tokens = 1460, truncated = 0
-srv  update_slots: all slots are idle
-srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
-srv  params_from_: Chat format: Hermes 2 Pro
-slot get_availabl: id  1 | task -1 | selected slot by LCP similarity, sim_best = 0.168 (> 0.100 thold), f_keep = 0.138
-srv  get_availabl: updating prompt cache
-srv   prompt_save:  - saving prompt with length 1460, total state size = 273.768 MiB
-srv          load:  - looking for better prompt, base f_keep = 0.138, sim = 0.168
-srv        update:  - cache state: 1 prompts, 273.768 MiB (limits: 8192.000 MiB, 32768 tokens, 43687 est)
-srv        update:    - prompt 0x63785a3f42d0:    1460 tokens, checkpoints:  0,   273.768 MiB
-srv  get_availabl: prompt cache update took 259.80 ms
-slot launch_slot_: id  1 | task -1 | sampler chain: logits -> ?penalties -> ?dry -> ?top-n-sigma -> top-k -> ?typical -> top-p -> min-p -> ?xtc -> temp-ext -> dist 
-slot launch_slot_: id  1 | task 446 | processing task, is_child = 0
-slot update_slots: id  1 | task 446 | new prompt, n_ctx_slot = 32768, n_keep = 0, task.n_tokens = 1205
-slot update_slots: id  1 | task 446 | n_tokens = 202, memory_seq_rm [202, end)
-slot update_slots: id  1 | task 446 | prompt processing progress, n_tokens = 1205, batch.n_tokens = 1003, progress = 1.000000
-slot update_slots: id  1 | task 446 | prompt done, n_tokens = 1205, batch.n_tokens = 1003
-slot init_sampler: id  1 | task 446 | init sampler, took 0.16 ms, tokens: text = 1205, total = 1205
-slot print_timing: id  1 | task 446 | 
-prompt eval time =     392.91 ms /  1003 tokens (    0.39 ms per token,  2552.73 tokens per second)
-       eval time =    4295.86 ms /   308 tokens (   13.95 ms per token,    71.70 tokens per second)
-      total time =    4688.77 ms /  1311 tokens
-slot      release: id  1 | task 446 | stop processing: n_tokens = 1512, truncated = 0
+prompt eval time =     100.61 ms /   147 tokens (    0.68 ms per token,  1461.16 tokens per second)
+       eval time =    1771.24 ms /   133 tokens (   13.32 ms per token,    75.09 tokens per second)
+      total time =    1871.85 ms /   280 tokens
+slot      release: id  3 | task 0 | stop processing: n_tokens = 279, truncated = 0
 srv  update_slots: all slots are idle
 srv  log_server_r: done request: POST /v1/chat/completions 127.0.0.1 200
 srv    operator(): operator(): cleaning up before exit...
 llama_memory_breakdown_print: | memory breakdown [MiB] | total   free     self   model   context   compute    unaccounted |
-llama_memory_breakdown_print: |   - CUDA0 (RTX 3090)   | 24124 = 3286 + (14599 =  8148 +    6144 +     307) +        6238 |
+llama_memory_breakdown_print: |   - CUDA0 (RTX 3090)   | 24124 = 3596 + (14599 =  8148 +    6144 +     307) +        5928 |
 llama_memory_breakdown_print: |   - Host               |                   501 =   417 +       0 +      84                |

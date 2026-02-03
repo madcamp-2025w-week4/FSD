@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <cctype>
+#include <cmath>
 #include <cstring>
 #include <deque>
 #include <iostream>
@@ -22,6 +23,8 @@ struct TranscriptEntry {
   std::string text;
 };
 
+class VadSegmenter;
+
 enum class SessionMode {
   kNote,
   kLecture,
@@ -34,19 +37,43 @@ struct ServiceConfig {
   std::string tts_base = "http://127.0.0.1:9880";
   std::string llama_model = "Qwen2.5-14B-Instruct-Q4_K_M.gguf";
   std::string tts_ref_audio_path =
-      "/root/madcamp04/FSD/GPT-SoVITS/logs/jw_voice/5-wav32k/"
-      "1.wav_0000150720_0000298560.wav";
+      "/root/madcamp04/FSD/GPT-SoVITS/logs/sb_voice_v2/5-wav32k/"
+      "1.wav_0000153280_0000310720.wav";
   std::string tts_prompt_text =
       "제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.";
   std::string tts_prompt_lang = "ko";
   std::string tts_text_lang = "ko";
+  std::string stt_language = "ko";
+  std::string stt_prompt;
   int64_t recent_window_ms = 10 * 60 * 1000;
   int stt_max_in_flight = 2;
   float vad_threshold = 0.01f;
+  // Accuracy-first VAD segmenter config
+  int sample_rate = 16000;
+  int vad_frame_ms = 20;
+  int vad_start_ms = 200;
+  int vad_end_ms = 500;
+  int vad_prepad_ms = 200;
+  int vad_postpad_ms = 300;
+  int vad_min_utt_ms = 1500;
+  int vad_max_utt_ms = 8000;
+  int vad_overlap_ms = 700;
+  float vad_threshold_db = -40.0f;
+  int vad_noise_calib_ms = 1500;
+  float vad_noise_margin_db = 10.0f;
+  bool vad_auto_calib = true;
 };
 
 ServiceConfig LoadConfig() {
   ServiceConfig cfg;
+  auto get_int = [](const char* v, int fallback) {
+    if (!v) return fallback;
+    try { return std::stoi(v); } catch (...) { return fallback; }
+  };
+  auto get_f = [](const char* v, float fallback) {
+    if (!v) return fallback;
+    try { return std::stof(v); } catch (...) { return fallback; }
+  };
   if (const char* v = std::getenv("CD_WHISPER_BASE")) cfg.whisper_base = v;
   if (const char* v = std::getenv("CD_LLM_BASE")) cfg.llama_base = v;
   if (const char* v = std::getenv("CD_TTS_BASE")) cfg.tts_base = v;
@@ -55,6 +82,19 @@ ServiceConfig LoadConfig() {
   if (const char* v = std::getenv("CD_TTS_PROMPT_TEXT")) cfg.tts_prompt_text = v;
   if (const char* v = std::getenv("CD_TTS_PROMPT_LANG")) cfg.tts_prompt_lang = v;
   if (const char* v = std::getenv("CD_TTS_TEXT_LANG")) cfg.tts_text_lang = v;
+  if (const char* v = std::getenv("CD_STT_LANGUAGE")) cfg.stt_language = v;
+  if (const char* v = std::getenv("CD_STT_PROMPT")) cfg.stt_prompt = v;
+  cfg.vad_frame_ms = get_int(std::getenv("CD_VAD_FRAME_MS"), cfg.vad_frame_ms);
+  cfg.vad_start_ms = get_int(std::getenv("CD_VAD_START_MS"), cfg.vad_start_ms);
+  cfg.vad_end_ms = get_int(std::getenv("CD_VAD_END_MS"), cfg.vad_end_ms);
+  cfg.vad_prepad_ms = get_int(std::getenv("CD_VAD_PREPAD_MS"), cfg.vad_prepad_ms);
+  cfg.vad_postpad_ms = get_int(std::getenv("CD_VAD_POSTPAD_MS"), cfg.vad_postpad_ms);
+  cfg.vad_min_utt_ms = get_int(std::getenv("CD_VAD_MIN_UTT_MS"), cfg.vad_min_utt_ms);
+  cfg.vad_max_utt_ms = get_int(std::getenv("CD_VAD_MAX_UTT_MS"), cfg.vad_max_utt_ms);
+  cfg.vad_overlap_ms = get_int(std::getenv("CD_VAD_OVERLAP_MS"), cfg.vad_overlap_ms);
+  cfg.vad_threshold_db = get_f(std::getenv("CD_VAD_THRESHOLD_DB"), cfg.vad_threshold_db);
+  cfg.vad_noise_calib_ms = get_int(std::getenv("CD_VAD_NOISE_CALIB_MS"), cfg.vad_noise_calib_ms);
+  cfg.vad_noise_margin_db = get_f(std::getenv("CD_VAD_NOISE_MARGIN_DB"), cfg.vad_noise_margin_db);
   return cfg;
 }
 
@@ -66,6 +106,7 @@ ServiceConfig& GetConfig() {
 struct SessionState {
   AudioProcessor audio;
   cd::server::TriggerEngine trigger;
+  std::unique_ptr<VadSegmenter> vad;
   SessionMode mode = SessionMode::kLecture;
   std::deque<TranscriptEntry> recent;
   std::vector<TranscriptEntry> full;
@@ -75,7 +116,7 @@ struct SessionState {
   std::atomic<bool> classifier_busy{false};
   int64_t last_question_ts = 0;
 
-  SessionState() : audio(AudioProcessor::Config{}) {}
+  SessionState() : audio(AudioProcessor::Config{}), vad(std::make_unique<VadSegmenter>(GetConfig())) {}
 };
 
 int64_t NowMs() {
@@ -180,6 +221,18 @@ std::string BuildMultipartBody(const std::string& boundary, const std::string& w
   oss << "Content-Disposition: form-data; name=\"file\"; filename=\"audio.wav\"\r\n";
   oss << "Content-Type: audio/wav\r\n\r\n";
   oss << wav_bytes << "\r\n";
+  // Optional whisper params
+  const auto& cfg = GetConfig();
+  if (!cfg.stt_language.empty()) {
+    oss << "--" << boundary << "\r\n";
+    oss << "Content-Disposition: form-data; name=\"language\"\r\n\r\n";
+    oss << cfg.stt_language << "\r\n";
+  }
+  if (!cfg.stt_prompt.empty()) {
+    oss << "--" << boundary << "\r\n";
+    oss << "Content-Disposition: form-data; name=\"prompt\"\r\n\r\n";
+    oss << cfg.stt_prompt << "\r\n";
+  }
   oss << "--" << boundary << "\r\n";
   oss << "Content-Disposition: form-data; name=\"response_format\"\r\n\r\n";
   oss << "json\r\n";
@@ -192,6 +245,158 @@ std::string ToString(const Json::Value& value) {
   builder["indentation"] = "";
   return Json::writeString(builder, value);
 }
+
+float RmsDbfs(const std::vector<int16_t>& frame) {
+  if (frame.empty()) return -120.0f;
+  const float inv = 1.0f / 32768.0f;
+  double sum_sq = 0.0;
+  for (int16_t s : frame) {
+    float v = static_cast<float>(s) * inv;
+    sum_sq += static_cast<double>(v * v);
+  }
+  double rms = std::sqrt(sum_sq / frame.size());
+  return 20.0f * std::log10(std::max(rms, 1e-9));
+}
+
+class VadSegmenter {
+ public:
+  explicit VadSegmenter(const ServiceConfig& cfg)
+      : cfg_(cfg),
+        frame_samples_(cfg.sample_rate * cfg.vad_frame_ms / 1000),
+        start_frames_(std::max(1, cfg.vad_start_ms / cfg.vad_frame_ms)),
+        end_frames_(std::max(1, cfg.vad_end_ms / cfg.vad_frame_ms)),
+        post_frames_(std::max(0, cfg.vad_postpad_ms / cfg.vad_frame_ms)),
+        prepad_samples_(cfg.sample_rate * cfg.vad_prepad_ms / 1000),
+        min_samples_(cfg.sample_rate * cfg.vad_min_utt_ms / 1000),
+        max_samples_(cfg.sample_rate * cfg.vad_max_utt_ms / 1000),
+        overlap_samples_(cfg.sample_rate * cfg.vad_overlap_ms / 1000),
+        noise_calib_frames_(std::max(0, cfg.vad_noise_calib_ms / cfg.vad_frame_ms)) {}
+
+  int frame_samples() const { return frame_samples_; }
+
+  template <typename F>
+  void PushFrame(const std::vector<int16_t>& frame, F on_segment) {
+    if (frame.empty()) return;
+
+    const float db = RmsDbfs(frame);
+
+    // noise calibration
+    if (cfg_.vad_auto_calib && !calibrated_ && noise_calib_frames_ > 0) {
+      noise_accum_ += std::pow(10.0f, db / 20.0f);
+      calib_frames_++;
+      if (calib_frames_ >= noise_calib_frames_) {
+        float avg_rms = noise_accum_ / static_cast<float>(calib_frames_);
+        noise_floor_db_ = 20.0f * std::log10(std::max(avg_rms, 1e-9f));
+        calibrated_ = true;
+      }
+    }
+
+    float threshold_db = cfg_.vad_threshold_db;
+    if (cfg_.vad_auto_calib && calibrated_) {
+      threshold_db = std::max(threshold_db, noise_floor_db_ + cfg_.vad_noise_margin_db);
+    }
+    const bool speech = db > threshold_db;
+    if (cfg_.vad_auto_calib && calibrated_ && !in_speech_ && !speech) {
+      noise_floor_db_ = 0.99f * noise_floor_db_ + 0.01f * db;
+    }
+
+    if (!in_speech_) {
+      if (speech) {
+        speech_frames_++;
+      } else {
+        speech_frames_ = 0;
+      }
+      if (speech_frames_ >= start_frames_) {
+        in_speech_ = true;
+        current_.clear();
+        if (!prepad_.empty()) {
+          current_.insert(current_.end(), prepad_.begin(), prepad_.end());
+        }
+        current_.insert(current_.end(), frame.begin(), frame.end());
+        silence_frames_ = 0;
+        speech_frames_ = 0;
+      }
+      // update prepad buffer (keep only previous audio)
+      if (!in_speech_ && prepad_samples_ > 0) {
+        prepad_.insert(prepad_.end(), frame.begin(), frame.end());
+        if (prepad_.size() > static_cast<size_t>(prepad_samples_)) {
+          prepad_.erase(prepad_.begin(), prepad_.end() - prepad_samples_);
+        }
+      }
+      return;
+    }
+
+    // in speech
+    current_.insert(current_.end(), frame.begin(), frame.end());
+    if (speech) {
+      silence_frames_ = 0;
+    } else {
+      silence_frames_++;
+    }
+
+    // forced cut for max length with overlap
+    if (static_cast<int>(current_.size()) >= max_samples_) {
+      if (static_cast<int>(current_.size()) >= min_samples_) {
+        auto segment = current_;
+        on_segment(std::move(segment));
+      }
+      // keep overlap for next segment continuation
+      if (overlap_samples_ > 0 && static_cast<int>(current_.size()) > overlap_samples_) {
+        std::vector<int16_t> overlap(current_.end() - overlap_samples_, current_.end());
+        current_.swap(overlap);
+      } else {
+        current_.clear();
+      }
+      silence_frames_ = 0;
+      return;
+    }
+
+    // end of speech + postpad
+    if (silence_frames_ >= end_frames_ + post_frames_) {
+      EmitSegment(on_segment);
+      current_.clear();
+      in_speech_ = false;
+      silence_frames_ = 0;
+      speech_frames_ = 0;
+      // after end, allow prepad to collect new silence frames
+      if (prepad_samples_ > 0) {
+        prepad_.clear();
+      }
+    }
+  }
+
+ private:
+  template <typename F>
+  void EmitSegment(F on_segment) {
+    if (static_cast<int>(current_.size()) < min_samples_) {
+      return;
+    }
+    on_segment(std::move(current_));
+    current_.clear();
+  }
+
+  const ServiceConfig& cfg_;
+  int frame_samples_;
+  int start_frames_;
+  int end_frames_;
+  int post_frames_;
+  int prepad_samples_;
+  int min_samples_;
+  int max_samples_;
+  int overlap_samples_;
+  int noise_calib_frames_;
+
+  bool in_speech_ = false;
+  int speech_frames_ = 0;
+  int silence_frames_ = 0;
+  std::deque<int16_t> prepad_;
+  std::vector<int16_t> current_;
+
+  bool calibrated_ = false;
+  int calib_frames_ = 0;
+  float noise_accum_ = 0.0f;
+  float noise_floor_db_ = -60.0f;
+};
 
 }  // namespace
 
@@ -402,22 +607,15 @@ void AudioStreamController::handleNewMessage(
 
   session->audio.write(pcm_data.data(), pcm_data.size());
 
-  while (session->audio.get_stored_samples() >= INFERENCE_SAMPLES) {
+  const int frame_samples = session->vad->frame_samples();
+
+  auto send_segment = [session, wsConnPtr](std::vector<int16_t>&& segment) {
+    if (segment.empty()) return;
     if (session->stt_in_flight.load() >= GetConfig().stt_max_in_flight) {
-      break;
+      return;
     }
 
-    std::vector<int16_t> chunk;
-    if (session->audio.read(INFERENCE_SAMPLES, chunk) == 0) {
-      break;
-    }
-
-    float energy = AudioProcessor::compute_energy(chunk);
-    if (energy < GetConfig().vad_threshold) {
-      continue;
-    }
-
-    std::string wav = BuildWav(chunk, 16000);
+    std::string wav = BuildWav(segment, 16000);
     std::string boundary = MakeBoundary();
     std::string body = BuildMultipartBody(boundary, wav);
 
@@ -503,9 +701,24 @@ void AudioStreamController::handleNewMessage(
               }
 
               std::string context;
+              std::string prev_block;
               {
                 std::lock_guard<std::mutex> lock(session->lock);
                 context = JoinText(session->recent, 6000);
+                // last two lines before current (if available)
+                const int n = static_cast<int>(session->recent.size());
+                std::vector<std::string> prev_lines;
+                if (n >= 2) prev_lines.push_back(session->recent[n - 2].text);
+                if (n >= 3) prev_lines.insert(prev_lines.begin(), session->recent[n - 3].text);
+                // Build a compact block: prev2 + current
+                std::ostringstream oss;
+                if (!prev_lines.empty()) {
+                  for (const auto& line : prev_lines) {
+                    if (!line.empty()) oss << line << "\n";
+                  }
+                }
+                if (!text.empty()) oss << text;
+                prev_block = oss.str();
               }
 
               Json::Value req;
@@ -513,12 +726,16 @@ void AudioStreamController::handleNewMessage(
               Json::Value messages(Json::arrayValue);
               Json::Value system;
               system["role"] = "system";
-              system["content"] = "You are a lecture assistant. Answer clearly and concisely.";
+              system["content"] =
+                  "당신은 학생(사용자)입니다. 교수 질문에 대해 학생이 직접 말하는 짧은 답변만 출력하세요. "
+                  "분석, 설명, 요약, 근거, 추론 과정은 절대 쓰지 마세요. "
+                  "1~2문장, 50자 이내. 한국어로만 답변하세요.";
               Json::Value user;
               user["role"] = "user";
               user["content"] =
-                  "Recent transcript:\n" + context + "\n\nQuestion:\n" + text +
-                  "\n\nAnswer in Korean.";
+                  "교수 질문 후보:\n" + prev_block +
+                  "\n\n최근 10분 내용:\n" + context +
+                  "\n\n위 맥락을 참고해서 학생이 교수에게 바로 답하는 한두 문장만 출력하세요.";
               messages.append(system);
               messages.append(user);
               req["messages"] = messages;
@@ -668,6 +885,14 @@ void AudioStreamController::handleNewMessage(
             }).detach();
           }
         });
+  };
+
+  while (session->audio.get_stored_samples() >= static_cast<size_t>(frame_samples)) {
+    std::vector<int16_t> frame;
+    if (session->audio.read(frame_samples, frame) == 0) {
+      break;
+    }
+    session->vad->PushFrame(frame, send_segment);
   }
 }
 
