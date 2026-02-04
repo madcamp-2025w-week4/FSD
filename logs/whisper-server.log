@@ -38,12 +38,27 @@ whisper_init_state: compute buffer (decode) =  100.04 MB
 
 system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
 
-operator(): processing 'audio.wav' (40000 samples, 2.5 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+operator(): processing 'audio.wav' (57600 samples, 3.6 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
 
 
 system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
 
-operator(): processing 'audio.wav' (46720 samples, 2.9 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+operator(): processing 'audio.wav' (30080 samples, 1.9 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (83200 samples, 5.2 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (24320 samples, 1.5 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (53120 samples, 3.3 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
 
 
 system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
@@ -53,21 +68,206 @@ operator(): processing 'audio.wav' (128000 samples, 8.0 sec), 4 threads, 1 proce
 
 system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
 
-operator(): processing 'audio.wav' (69440 samples, 4.3 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+operator(): processing 'audio.wav' (89280 samples, 5.6 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
 
 
-whisper_print_timings:     load time =  1548.58 ms
-whisper_print_timings:     fallbacks =   1 p /   0 h
-whisper_print_timings:      mel time =    91.19 ms
-whisper_print_timings:   sample time =    80.22 ms /     1 runs (    80.22 ms per run)
-whisper_print_timings:   encode time =   354.63 ms /     4 runs (    88.66 ms per run)
-whisper_print_timings:   decode time =   564.26 ms /    91 runs (     6.20 ms per run)
-whisper_print_timings:   batchd time =   110.67 ms /    33 runs (     3.35 ms per run)
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (44160 samples, 2.8 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (67520 samples, 4.2 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (125440 samples, 7.8 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (39360 samples, 2.5 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (43840 samples, 2.7 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (25280 samples, 1.6 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (43520 samples, 2.7 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (62080 samples, 3.9 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (25920 samples, 1.6 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (122560 samples, 7.7 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (87360 samples, 5.5 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (24640 samples, 1.5 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (32320 samples, 2.0 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (32960 samples, 2.1 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (11520 samples, 0.7 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (17600 samples, 1.1 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (60160 samples, 3.8 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (17280 samples, 1.1 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (16960 samples, 1.1 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (26240 samples, 1.6 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (80640 samples, 5.0 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+system_info: n_threads = 4 / 40 | WHISPER : COREML = 0 | OPENVINO = 0 | CUDA : ARCHS = 750,800,860,890,900,1000,1030,1100,1200,1210 | PEER_MAX_BATCH_SIZE = 128 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VNNI = 1 | OPENMP = 1 | REPACK = 1 | 
+
+operator(): processing 'audio.wav' (128000 samples, 8.0 sec), 4 threads, 1 processors, lang = ko, task = transcribe, timestamps = 1 ...
+
+
+whisper_print_timings:     load time =  1587.74 ms
+whisper_print_timings:     fallbacks =   3 p /   0 h
+whisper_print_timings:      mel time =   518.19 ms
+whisper_print_timings:   sample time =   303.11 ms /     1 runs (   303.11 ms per run)
+whisper_print_timings:   encode time =  2105.92 ms /    29 runs (    72.62 ms per run)
+whisper_print_timings:   decode time =  2186.04 ms /   354 runs (     6.18 ms per run)
+whisper_print_timings:   batchd time =   468.94 ms /   154 runs (     3.05 ms per run)
 whisper_print_timings:   prompt time =     0.00 ms /     1 runs (     0.00 ms per run)
-whisper_print_timings:    total time = 157444.84 ms
+whisper_print_timings:    total time = 1309326.38 ms
 
 whisper server listening at http://0.0.0.0:8081
 
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
+Received request: audio.wav
+Successfully loaded audio.wav
+Running whisper.cpp inference on audio.wav
 Received request: audio.wav
 Successfully loaded audio.wav
 Running whisper.cpp inference on audio.wav

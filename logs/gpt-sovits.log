@@ -2,113 +2,118 @@
 device              : cuda
 is_half             : True
 version             : v2
-t2s_weights_path    : /root/madcamp04/FSD/GPT-SoVITS/GPT_weights_v2/jw_voice_v2-e15.ckpt
-vits_weights_path   : /root/madcamp04/FSD/GPT-SoVITS/SoVITS_weights_v2/jw_voice_v2_e8_s152.pth
+t2s_weights_path    : /root/madcamp04/FSD/GPT-SoVITS/GPT_weights_v2/sb_voice_cor-e16.ckpt
+vits_weights_path   : /root/madcamp04/FSD/GPT-SoVITS/SoVITS_weights_v2/sb_voice_cor_e12_s192.pth
 bert_base_path      : GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large
 cnhuhbert_base_path : GPT_SoVITS/pretrained_models/chinese-hubert-base
 ----------------------------------------------------------------------------------------------------
 
-Loading Text2Semantic weights from /root/madcamp04/FSD/GPT-SoVITS/GPT_weights_v2/jw_voice_v2-e15.ckpt
-Loading VITS weights from /root/madcamp04/FSD/GPT-SoVITS/SoVITS_weights_v2/jw_voice_v2_e8_s152.pth. _IncompatibleKeys(missing_keys=['enc_q.pre.weight', 'enc_q.pre.bias', 'enc_q.enc.in_layers.0.bias', 'enc_q.enc.in_layers.0.weight_g', 'enc_q.enc.in_layers.0.weight_v', 'enc_q.enc.in_layers.1.bias', 'enc_q.enc.in_layers.1.weight_g', 'enc_q.enc.in_layers.1.weight_v', 'enc_q.enc.in_layers.2.bias', 'enc_q.enc.in_layers.2.weight_g', 'enc_q.enc.in_layers.2.weight_v', 'enc_q.enc.in_layers.3.bias', 'enc_q.enc.in_layers.3.weight_g', 'enc_q.enc.in_layers.3.weight_v', 'enc_q.enc.in_layers.4.bias', 'enc_q.enc.in_layers.4.weight_g', 'enc_q.enc.in_layers.4.weight_v', 'enc_q.enc.in_layers.5.bias', 'enc_q.enc.in_layers.5.weight_g', 'enc_q.enc.in_layers.5.weight_v', 'enc_q.enc.in_layers.6.bias', 'enc_q.enc.in_layers.6.weight_g', 'enc_q.enc.in_layers.6.weight_v', 'enc_q.enc.in_layers.7.bias', 'enc_q.enc.in_layers.7.weight_g', 'enc_q.enc.in_layers.7.weight_v', 'enc_q.enc.in_layers.8.bias', 'enc_q.enc.in_layers.8.weight_g', 'enc_q.enc.in_layers.8.weight_v', 'enc_q.enc.in_layers.9.bias', 'enc_q.enc.in_layers.9.weight_g', 'enc_q.enc.in_layers.9.weight_v', 'enc_q.enc.in_layers.10.bias', 'enc_q.enc.in_layers.10.weight_g', 'enc_q.enc.in_layers.10.weight_v', 'enc_q.enc.in_layers.11.bias', 'enc_q.enc.in_layers.11.weight_g', 'enc_q.enc.in_layers.11.weight_v', 'enc_q.enc.in_layers.12.bias', 'enc_q.enc.in_layers.12.weight_g', 'enc_q.enc.in_layers.12.weight_v', 'enc_q.enc.in_layers.13.bias', 'enc_q.enc.in_layers.13.weight_g', 'enc_q.enc.in_layers.13.weight_v', 'enc_q.enc.in_layers.14.bias', 'enc_q.enc.in_layers.14.weight_g', 'enc_q.enc.in_layers.14.weight_v', 'enc_q.enc.in_layers.15.bias', 'enc_q.enc.in_layers.15.weight_g', 'enc_q.enc.in_layers.15.weight_v', 'enc_q.enc.res_skip_layers.0.bias', 'enc_q.enc.res_skip_layers.0.weight_g', 'enc_q.enc.res_skip_layers.0.weight_v', 'enc_q.enc.res_skip_layers.1.bias', 'enc_q.enc.res_skip_layers.1.weight_g', 'enc_q.enc.res_skip_layers.1.weight_v', 'enc_q.enc.res_skip_layers.2.bias', 'enc_q.enc.res_skip_layers.2.weight_g', 'enc_q.enc.res_skip_layers.2.weight_v', 'enc_q.enc.res_skip_layers.3.bias', 'enc_q.enc.res_skip_layers.3.weight_g', 'enc_q.enc.res_skip_layers.3.weight_v', 'enc_q.enc.res_skip_layers.4.bias', 'enc_q.enc.res_skip_layers.4.weight_g', 'enc_q.enc.res_skip_layers.4.weight_v', 'enc_q.enc.res_skip_layers.5.bias', 'enc_q.enc.res_skip_layers.5.weight_g', 'enc_q.enc.res_skip_layers.5.weight_v', 'enc_q.enc.res_skip_layers.6.bias', 'enc_q.enc.res_skip_layers.6.weight_g', 'enc_q.enc.res_skip_layers.6.weight_v', 'enc_q.enc.res_skip_layers.7.bias', 'enc_q.enc.res_skip_layers.7.weight_g', 'enc_q.enc.res_skip_layers.7.weight_v', 'enc_q.enc.res_skip_layers.8.bias', 'enc_q.enc.res_skip_layers.8.weight_g', 'enc_q.enc.res_skip_layers.8.weight_v', 'enc_q.enc.res_skip_layers.9.bias', 'enc_q.enc.res_skip_layers.9.weight_g', 'enc_q.enc.res_skip_layers.9.weight_v', 'enc_q.enc.res_skip_layers.10.bias', 'enc_q.enc.res_skip_layers.10.weight_g', 'enc_q.enc.res_skip_layers.10.weight_v', 'enc_q.enc.res_skip_layers.11.bias', 'enc_q.enc.res_skip_layers.11.weight_g', 'enc_q.enc.res_skip_layers.11.weight_v', 'enc_q.enc.res_skip_layers.12.bias', 'enc_q.enc.res_skip_layers.12.weight_g', 'enc_q.enc.res_skip_layers.12.weight_v', 'enc_q.enc.res_skip_layers.13.bias', 'enc_q.enc.res_skip_layers.13.weight_g', 'enc_q.enc.res_skip_layers.13.weight_v', 'enc_q.enc.res_skip_layers.14.bias', 'enc_q.enc.res_skip_layers.14.weight_g', 'enc_q.enc.res_skip_layers.14.weight_v', 'enc_q.enc.res_skip_layers.15.bias', 'enc_q.enc.res_skip_layers.15.weight_g', 'enc_q.enc.res_skip_layers.15.weight_v', 'enc_q.enc.cond_layer.bias', 'enc_q.enc.cond_layer.weight_g', 'enc_q.enc.cond_layer.weight_v', 'enc_q.proj.weight', 'enc_q.proj.bias'], unexpected_keys=[])
+Loading Text2Semantic weights from /root/madcamp04/FSD/GPT-SoVITS/GPT_weights_v2/sb_voice_cor-e16.ckpt
+Loading VITS weights from /root/madcamp04/FSD/GPT-SoVITS/SoVITS_weights_v2/sb_voice_cor_e12_s192.pth. _IncompatibleKeys(missing_keys=['enc_q.pre.weight', 'enc_q.pre.bias', 'enc_q.enc.in_layers.0.bias', 'enc_q.enc.in_layers.0.weight_g', 'enc_q.enc.in_layers.0.weight_v', 'enc_q.enc.in_layers.1.bias', 'enc_q.enc.in_layers.1.weight_g', 'enc_q.enc.in_layers.1.weight_v', 'enc_q.enc.in_layers.2.bias', 'enc_q.enc.in_layers.2.weight_g', 'enc_q.enc.in_layers.2.weight_v', 'enc_q.enc.in_layers.3.bias', 'enc_q.enc.in_layers.3.weight_g', 'enc_q.enc.in_layers.3.weight_v', 'enc_q.enc.in_layers.4.bias', 'enc_q.enc.in_layers.4.weight_g', 'enc_q.enc.in_layers.4.weight_v', 'enc_q.enc.in_layers.5.bias', 'enc_q.enc.in_layers.5.weight_g', 'enc_q.enc.in_layers.5.weight_v', 'enc_q.enc.in_layers.6.bias', 'enc_q.enc.in_layers.6.weight_g', 'enc_q.enc.in_layers.6.weight_v', 'enc_q.enc.in_layers.7.bias', 'enc_q.enc.in_layers.7.weight_g', 'enc_q.enc.in_layers.7.weight_v', 'enc_q.enc.in_layers.8.bias', 'enc_q.enc.in_layers.8.weight_g', 'enc_q.enc.in_layers.8.weight_v', 'enc_q.enc.in_layers.9.bias', 'enc_q.enc.in_layers.9.weight_g', 'enc_q.enc.in_layers.9.weight_v', 'enc_q.enc.in_layers.10.bias', 'enc_q.enc.in_layers.10.weight_g', 'enc_q.enc.in_layers.10.weight_v', 'enc_q.enc.in_layers.11.bias', 'enc_q.enc.in_layers.11.weight_g', 'enc_q.enc.in_layers.11.weight_v', 'enc_q.enc.in_layers.12.bias', 'enc_q.enc.in_layers.12.weight_g', 'enc_q.enc.in_layers.12.weight_v', 'enc_q.enc.in_layers.13.bias', 'enc_q.enc.in_layers.13.weight_g', 'enc_q.enc.in_layers.13.weight_v', 'enc_q.enc.in_layers.14.bias', 'enc_q.enc.in_layers.14.weight_g', 'enc_q.enc.in_layers.14.weight_v', 'enc_q.enc.in_layers.15.bias', 'enc_q.enc.in_layers.15.weight_g', 'enc_q.enc.in_layers.15.weight_v', 'enc_q.enc.res_skip_layers.0.bias', 'enc_q.enc.res_skip_layers.0.weight_g', 'enc_q.enc.res_skip_layers.0.weight_v', 'enc_q.enc.res_skip_layers.1.bias', 'enc_q.enc.res_skip_layers.1.weight_g', 'enc_q.enc.res_skip_layers.1.weight_v', 'enc_q.enc.res_skip_layers.2.bias', 'enc_q.enc.res_skip_layers.2.weight_g', 'enc_q.enc.res_skip_layers.2.weight_v', 'enc_q.enc.res_skip_layers.3.bias', 'enc_q.enc.res_skip_layers.3.weight_g', 'enc_q.enc.res_skip_layers.3.weight_v', 'enc_q.enc.res_skip_layers.4.bias', 'enc_q.enc.res_skip_layers.4.weight_g', 'enc_q.enc.res_skip_layers.4.weight_v', 'enc_q.enc.res_skip_layers.5.bias', 'enc_q.enc.res_skip_layers.5.weight_g', 'enc_q.enc.res_skip_layers.5.weight_v', 'enc_q.enc.res_skip_layers.6.bias', 'enc_q.enc.res_skip_layers.6.weight_g', 'enc_q.enc.res_skip_layers.6.weight_v', 'enc_q.enc.res_skip_layers.7.bias', 'enc_q.enc.res_skip_layers.7.weight_g', 'enc_q.enc.res_skip_layers.7.weight_v', 'enc_q.enc.res_skip_layers.8.bias', 'enc_q.enc.res_skip_layers.8.weight_g', 'enc_q.enc.res_skip_layers.8.weight_v', 'enc_q.enc.res_skip_layers.9.bias', 'enc_q.enc.res_skip_layers.9.weight_g', 'enc_q.enc.res_skip_layers.9.weight_v', 'enc_q.enc.res_skip_layers.10.bias', 'enc_q.enc.res_skip_layers.10.weight_g', 'enc_q.enc.res_skip_layers.10.weight_v', 'enc_q.enc.res_skip_layers.11.bias', 'enc_q.enc.res_skip_layers.11.weight_g', 'enc_q.enc.res_skip_layers.11.weight_v', 'enc_q.enc.res_skip_layers.12.bias', 'enc_q.enc.res_skip_layers.12.weight_g', 'enc_q.enc.res_skip_layers.12.weight_v', 'enc_q.enc.res_skip_layers.13.bias', 'enc_q.enc.res_skip_layers.13.weight_g', 'enc_q.enc.res_skip_layers.13.weight_v', 'enc_q.enc.res_skip_layers.14.bias', 'enc_q.enc.res_skip_layers.14.weight_g', 'enc_q.enc.res_skip_layers.14.weight_v', 'enc_q.enc.res_skip_layers.15.bias', 'enc_q.enc.res_skip_layers.15.weight_g', 'enc_q.enc.res_skip_layers.15.weight_v', 'enc_q.enc.cond_layer.bias', 'enc_q.enc.cond_layer.weight_g', 'enc_q.enc.cond_layer.weight_v', 'enc_q.proj.weight', 'enc_q.proj.bias'], unexpected_keys=[])
 Loading BERT weights from GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large
 Loading CNHuBERT weights from GPT_SoVITS/pretrained_models/chinese-hubert-base
-INFO:     Started server process [539128]
+INFO:     Started server process [851194]
 INFO:     Waiting for application startup.
 INFO:     Application startup complete.
 INFO:     Uvicorn running on http://0.0.0.0:9880 (Press CTRL+C to quit)
 False False False
-Set seed to 3744314430
+Set seed to 1085291186
 Parallel Inference Mode Enabled
 Bucket Processing Mode Enabled
 Actual Input Reference Text: 제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.
 mecab installed
 ############ Segment Text ############
 Actual Input Target Text:
-。네, 대화 내용을 정리해 드리겠습니다.
-
-1. "알았어?" 
-2. "그냥 생각만 하고"
-3. " 그럼 그게 소중한 거"
-4. "어 근데 이거 뭐라 했지 질문이?"
-5. "질문이 뭐였지?"
-6. "알아요?"
-7. "알아요였나?"
-
-이렇게 요약할 수 있습니다. 질문이 여러 가지로 반복되고 있는 것 같습니다. 좀 더 구체적인 질문이나 상황에 대해 말씀해 주시면 도움이 될 것 같습니다.
+조절이 잘 되는 것 같아요, 하지만 이해가 어려운 부분도 있는 것 같네요.
 Actual Input Target Text (after sentence segmentation):
-['네, 대화 내용을 정리해 드리겠습니다.', '1. "알았어?', '" 2. "그냥 생각만 하고"。', '3. " 그럼 그게 소중한 거"。', '4. "어 근데 이거 뭐라 했지 질문이?', '"5. "질문이 뭐였지?', '"6. "알아요?', '"7. "알아요였나?', '"이렇게 요약할 수 있습니다.', ' 질문이 여러 가지로 반복되고 있는 것 같습니다.', ' 좀 더 구체적인 질문이나 상황에 대해 말씀해 주시면 도움이 될 것 같습니다.']
+['조절이 잘 되는 것 같아요,', ' 하지만 이해가 어려운 부분도 있는 것 같네요.']
 ############ Extract Text BERT Features ############
-  0%|          | 0/11 [00:00<?, ?it/s] 45%|████▌     | 5/11 [00:00<00:00, 41.31it/s] 91%|█████████ | 10/11 [00:00<00:00, 42.11it/s]100%|██████████| 11/11 [00:00<00:00, 41.75it/s]
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 37.66it/s]
 ############ 推理 ############
-Processed text from the frontend (per sentence): ['1. "알았어?']
+Processed text from the frontend (per sentence): ['조절이 잘 되는 것 같아요,']
 ############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  0%|          | 1/1500 [00:00<03:26,  7.27it/s]  1%|          | 12/1500 [00:00<00:25, 58.56it/s]  2%|▏         | 23/1500 [00:00<00:18, 79.35it/s]  2%|▏         | 34/1500 [00:00<00:16, 90.28it/s]  2%|▏         | 35/1500 [00:00<00:19, 74.96it/s]
-T2S Decoding EOS [130 -> 166]
+  0%|          | 0/1500 [00:00<?, ?it/s]  0%|          | 1/1500 [00:00<03:56,  6.35it/s]  1%|          | 12/1500 [00:00<00:27, 53.49it/s]  2%|▏         | 23/1500 [00:00<00:19, 74.41it/s]  2%|▏         | 34/1500 [00:00<00:17, 85.76it/s]  3%|▎         | 38/1500 [00:00<00:20, 72.05it/s]
+T2S Decoding EOS [137 -> 176]
 ############ Synthesize Audio ############
 Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['"6. "알아요?']
+Processed text from the frontend (per sentence): ['하지만 이해가 어려운 부분도 있는 것 같네요.']
 ############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 103.71it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.38it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.27it/s]  3%|▎         | 44/1500 [00:00<00:13, 106.57it/s]  3%|▎         | 51/1500 [00:00<00:13, 104.22it/s]
-T2S Decoding EOS [130 -> 182]
+  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 10/1500 [00:00<00:15, 98.42it/s]  1%|▏         | 21/1500 [00:00<00:14, 100.65it/s]  2%|▏         | 32/1500 [00:00<00:14, 101.19it/s]  3%|▎         | 43/1500 [00:00<00:14, 102.03it/s]  4%|▎         | 54/1500 [00:00<00:14, 102.09it/s]  4%|▍         | 61/1500 [00:00<00:14, 99.99it/s] 
+T2S Decoding EOS [137 -> 199]
 ############ Synthesize Audio ############
 Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['"7. "알아요였나?']
+2.342	0.059	1.183	0.626
+INFO:     127.0.0.1:42678 - "POST /tts HTTP/1.1" 200 OK
+False False False
+Set seed to 2875094737
+Parallel Inference Mode Enabled
+Bucket Processing Mode Enabled
+Actual Input Reference Text: 제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.
+############ Segment Text ############
+Actual Input Target Text:
+문장으로 만들었더니 보정이 좀 되서 단어만 말하는 것보다 나아진 것 같아요.
+Actual Input Target Text (after sentence segmentation):
+['문장으로 만들었더니 보정이 좀 되서 단어만 말하는 것보다 나아진 것 같아요.']
+############ Extract Text BERT Features ############
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 25.72it/s]
+############ 推理 ############
+Processed text from the frontend (per sentence): ['문장으로 만들었더니 보정이 좀 되서 단어만 말하는 것보다 나아진 것 같아요.']
 ############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 105.54it/s]  1%|▏         | 22/1500 [00:00<00:14, 104.47it/s]  2%|▏         | 33/1500 [00:00<00:13, 105.58it/s]  2%|▏         | 37/1500 [00:00<00:14, 102.42it/s]
-T2S Decoding EOS [130 -> 168]
+  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 10/1500 [00:00<00:14, 99.66it/s]  1%|▏         | 21/1500 [00:00<00:14, 102.77it/s]  2%|▏         | 32/1500 [00:00<00:14, 104.38it/s]  3%|▎         | 43/1500 [00:00<00:14, 103.88it/s]  4%|▎         | 54/1500 [00:00<00:14, 102.90it/s]  4%|▍         | 65/1500 [00:00<00:13, 103.53it/s]  5%|▌         | 76/1500 [00:00<00:13, 103.69it/s]  6%|▌         | 87/1500 [00:00<00:13, 104.37it/s]  7%|▋         | 98/1500 [00:00<00:13, 103.97it/s]  7%|▋         | 106/1500 [00:01<00:13, 102.69it/s]
+T2S Decoding EOS [137 -> 244]
 ############ Synthesize Audio ############
 Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['"5. "질문이 뭐였지?']
+0.000	0.043	1.035	0.383
+INFO:     127.0.0.1:45836 - "POST /tts HTTP/1.1" 200 OK
+False False False
+Set seed to 1668795183
+Parallel Inference Mode Enabled
+Bucket Processing Mode Enabled
+Actual Input Reference Text: 제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.
+############ Segment Text ############
+Actual Input Target Text:
+。몰라요, 좀 더 설명해 주실 수 있으신가요?
+Actual Input Target Text (after sentence segmentation):
+['몰라요, 좀 더 설명해 주실 수 있으신가요?']
+############ Extract Text BERT Features ############
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 21.20it/s]
+############ 推理 ############
+Processed text from the frontend (per sentence): ['몰라요, 좀 더 설명해 주실 수 있으신가요?']
 ############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 105.01it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.36it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.21it/s]  3%|▎         | 42/1500 [00:00<00:14, 103.82it/s]
-T2S Decoding EOS [130 -> 173]
+  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 10/1500 [00:00<00:15, 94.33it/s]  1%|▏         | 20/1500 [00:00<00:15, 97.36it/s]  2%|▏         | 31/1500 [00:00<00:14, 98.75it/s]  3%|▎         | 41/1500 [00:00<00:14, 98.98it/s]  3%|▎         | 52/1500 [00:00<00:14, 99.42it/s]  4%|▍         | 63/1500 [00:00<00:14, 99.79it/s]  5%|▍         | 73/1500 [00:00<00:14, 99.70it/s]  5%|▍         | 73/1500 [00:00<00:14, 97.68it/s]
+T2S Decoding EOS [137 -> 211]
 ############ Synthesize Audio ############
 Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['"이렇게 요약할 수 있습니다.']
+0.000	0.052	0.750	0.200
+INFO:     127.0.0.1:58724 - "POST /tts HTTP/1.1" 200 OK
+False False False
+Set seed to 3695943276
+Parallel Inference Mode Enabled
+Bucket Processing Mode Enabled
+Actual Input Reference Text: 제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.
+############ Segment Text ############
+Actual Input Target Text:
+3퀴즈가 있는 줄 알았는데 서로가 있었네요. 컴퓨터 소리 때문에 혼란스러웠어요.
+Actual Input Target Text (after sentence segmentation):
+['3퀴즈가 있는 줄 알았는데 서로가 있었네요.', ' 컴퓨터 소리 때문에 혼란스러웠어요.']
+############ Extract Text BERT Features ############
+  0%|          | 0/2 [00:00<?, ?it/s]100%|██████████| 2/2 [00:00<00:00, 17.76it/s]100%|██████████| 2/2 [00:00<00:00, 17.72it/s]
+############ 推理 ############
+Processed text from the frontend (per sentence): ['컴퓨터 소리 때문에 혼란스러웠어요.']
 ############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:13, 106.58it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.15it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.08it/s]  3%|▎         | 42/1500 [00:00<00:14, 103.65it/s]
-T2S Decoding EOS [130 -> 173]
+  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 8/1500 [00:00<00:18, 79.98it/s]  1%|          | 16/1500 [00:00<00:18, 78.23it/s]  2%|▏         | 25/1500 [00:00<00:18, 81.07it/s]  2%|▏         | 35/1500 [00:00<00:16, 87.31it/s]  3%|▎         | 45/1500 [00:00<00:16, 90.78it/s]  4%|▎         | 55/1500 [00:00<00:15, 93.40it/s]  4%|▍         | 57/1500 [00:00<00:16, 87.67it/s]
+T2S Decoding EOS [137 -> 195]
 ############ Synthesize Audio ############
 Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['" 2. "그냥 생각만 하고"。']
+Processed text from the frontend (per sentence): ['3퀴즈가 있는 줄 알았는데 서로가 있었네요.']
 ############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:13, 106.45it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.39it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.77it/s]  3%|▎         | 44/1500 [00:00<00:13, 106.87it/s]  3%|▎         | 46/1500 [00:00<00:13, 104.45it/s]
-T2S Decoding EOS [130 -> 177]
+  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 10/1500 [00:00<00:15, 95.95it/s]  1%|▏         | 20/1500 [00:00<00:15, 97.33it/s]  2%|▏         | 30/1500 [00:00<00:15, 97.38it/s]  3%|▎         | 40/1500 [00:00<00:14, 97.46it/s]  3%|▎         | 50/1500 [00:00<00:15, 93.47it/s]  4%|▍         | 60/1500 [00:00<00:15, 94.90it/s]  5%|▍         | 70/1500 [00:00<00:14, 95.56it/s]  5%|▍         | 70/1500 [00:00<00:15, 94.32it/s]
+T2S Decoding EOS [137 -> 208]
 ############ Synthesize Audio ############
 Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['3. " 그럼 그게 소중한 거"。']
-############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 105.89it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.44it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.58it/s]  3%|▎         | 43/1500 [00:00<00:13, 104.18it/s]
-T2S Decoding EOS [130 -> 174]
-############ Synthesize Audio ############
-Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['네, 대화 내용을 정리해 드리겠습니다.']
-############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 106.33it/s]  1%|▏         | 22/1500 [00:00<00:13, 107.07it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.95it/s]  3%|▎         | 44/1500 [00:00<00:13, 107.47it/s]  4%|▎         | 54/1500 [00:00<00:13, 105.05it/s]
-T2S Decoding EOS [130 -> 185]
-############ Synthesize Audio ############
-Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['4. "어 근데 이거 뭐라 했지 질문이?']
-############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 105.72it/s]  1%|▏         | 22/1500 [00:00<00:13, 107.13it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.85it/s]  3%|▎         | 44/1500 [00:00<00:13, 106.88it/s]  4%|▎         | 55/1500 [00:00<00:13, 107.19it/s]  4%|▍         | 66/1500 [00:00<00:13, 106.80it/s]  5%|▍         | 72/1500 [00:00<00:13, 105.24it/s]
-T2S Decoding EOS [130 -> 203]
-############ Synthesize Audio ############
-Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['질문이 여러 가지로 반복되고 있는 것 같습니다.']
-############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:14, 105.21it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.29it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.05it/s]  3%|▎         | 44/1500 [00:00<00:13, 106.35it/s]  4%|▎         | 55/1500 [00:00<00:13, 106.98it/s]  4%|▍         | 66/1500 [00:00<00:13, 107.04it/s]  5%|▍         | 74/1500 [00:00<00:13, 105.25it/s]
-T2S Decoding EOS [130 -> 205]
-############ Synthesize Audio ############
-Parallel Synthesis in Progress...
-Processed text from the frontend (per sentence): ['좀 더 구체적인 질문이나 상황에 대해 말씀해 주시면 도움이 될 것 같습니다.']
-############ Predict Semantic Token ############
-  0%|          | 0/1500 [00:00<?, ?it/s]  1%|          | 11/1500 [00:00<00:13, 106.38it/s]  1%|▏         | 22/1500 [00:00<00:13, 106.88it/s]  2%|▏         | 33/1500 [00:00<00:13, 106.79it/s]  3%|▎         | 44/1500 [00:00<00:13, 107.15it/s]  4%|▎         | 55/1500 [00:00<00:13, 107.21it/s]  4%|▍         | 66/1500 [00:00<00:13, 106.60it/s]  5%|▌         | 77/1500 [00:00<00:13, 106.69it/s]  6%|▌         | 88/1500 [00:00<00:13, 106.27it/s]  7%|▋         | 99/1500 [00:00<00:13, 105.77it/s]  7%|▋         | 110/1500 [00:01<00:13, 106.16it/s]  8%|▊         | 115/1500 [00:01<00:13, 105.38it/s]
-T2S Decoding EOS [130 -> 246]
-############ Synthesize Audio ############
-Parallel Synthesis in Progress...
-2.169	0.270	6.016	2.328
-INFO:     127.0.0.1:58492 - "POST /tts HTTP/1.1" 200 OK
+0.000	0.117	1.402	0.416
+INFO:     127.0.0.1:42464 - "POST /tts HTTP/1.1" 200 OK
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
 INFO:     Application shutdown complete.
-INFO:     Finished server process [539128]
+INFO:     Finished server process [851194]

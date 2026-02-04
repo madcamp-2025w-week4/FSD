@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstring>
 #include <deque>
+#include <fstream>
 #include <iostream>
 #include <mutex>
 #include <sstream>
@@ -37,12 +38,13 @@ struct ServiceConfig {
   std::string tts_base = "http://127.0.0.1:9880";
   std::string llama_model = "Qwen2.5-14B-Instruct-Q4_K_M.gguf";
   std::string tts_ref_audio_path =
-      "/root/madcamp04/FSD/GPT-SoVITS/logs/sb_voice_v2/5-wav32k/"
-      "1.wav_0000153280_0000310720.wav";
+      "/root/madcamp04/FSD/GPT-SoVITS/output/slicer_opt_sb_cor/"
+      "1_(Vocals).wav_0000161600_0000318720.wav";
   std::string tts_prompt_text =
       "제 목소리는 자연스럽고 또렷하게 들리도록 일정한 톤으로 말하겠습니다.";
   std::string tts_prompt_lang = "ko";
   std::string tts_text_lang = "ko";
+  std::string attendance_audio_path = "/root/madcamp04/FSD/yes.m4a";
   std::string stt_language = "ko";
   std::string stt_prompt;
   int64_t recent_window_ms = 10 * 60 * 1000;
@@ -52,10 +54,10 @@ struct ServiceConfig {
   int sample_rate = 16000;
   int vad_frame_ms = 20;
   int vad_start_ms = 200;
-  int vad_end_ms = 500;
+  int vad_end_ms = 200;
   int vad_prepad_ms = 200;
   int vad_postpad_ms = 300;
-  int vad_min_utt_ms = 1500;
+  int vad_min_utt_ms = 600;
   int vad_max_utt_ms = 8000;
   int vad_overlap_ms = 700;
   float vad_threshold_db = -40.0f;
@@ -82,6 +84,7 @@ ServiceConfig LoadConfig() {
   if (const char* v = std::getenv("CD_TTS_PROMPT_TEXT")) cfg.tts_prompt_text = v;
   if (const char* v = std::getenv("CD_TTS_PROMPT_LANG")) cfg.tts_prompt_lang = v;
   if (const char* v = std::getenv("CD_TTS_TEXT_LANG")) cfg.tts_text_lang = v;
+  if (const char* v = std::getenv("CD_ATTENDANCE_AUDIO")) cfg.attendance_audio_path = v;
   if (const char* v = std::getenv("CD_STT_LANGUAGE")) cfg.stt_language = v;
   if (const char* v = std::getenv("CD_STT_PROMPT")) cfg.stt_prompt = v;
   cfg.vad_frame_ms = get_int(std::getenv("CD_VAD_FRAME_MS"), cfg.vad_frame_ms);
@@ -115,6 +118,9 @@ struct SessionState {
   std::atomic<bool> llm_busy{false};
   std::atomic<bool> classifier_busy{false};
   int64_t last_question_ts = 0;
+  bool attendance_mode = false;
+  int64_t attendance_started_ms = 0;
+  int64_t last_attendance_tts_ms = 0;
 
   SessionState() : audio(AudioProcessor::Config{}), vad(std::make_unique<VadSegmenter>(GetConfig())) {}
 };
@@ -174,6 +180,14 @@ bool LooksAmbiguousQuestion(const std::string& text) {
   return false;
 }
 
+bool IsAttendanceStart(const std::string& text) {
+  return text.find("출석") != std::string::npos;
+}
+
+bool IsNameCalled(const std::string& text) {
+  return text.find("이상범") != std::string::npos;
+}
+
 std::string MakeBoundary() {
   static std::atomic<int> counter{0};
   return "----cd-boundary-" + std::to_string(counter.fetch_add(1));
@@ -189,6 +203,14 @@ void WriteU32LE(char* dst, uint32_t v) {
   dst[1] = static_cast<char>((v >> 8) & 0xff);
   dst[2] = static_cast<char>((v >> 16) & 0xff);
   dst[3] = static_cast<char>((v >> 24) & 0xff);
+}
+
+std::string ReadFileBinary(const std::string& path) {
+  std::ifstream in(path, std::ios::binary);
+  if (!in) return {};
+  std::ostringstream oss;
+  oss << in.rdbuf();
+  return oss.str();
 }
 
 std::string BuildWav(const std::vector<int16_t>& pcm, int sample_rate) {
@@ -671,7 +693,51 @@ void AudioStreamController::handleNewMessage(
             conn->send(ToString(payload));
           }
 
+          auto send_tts_only = [session, weak_conn](const std::string& reply) {
+            auto& cfg = GetConfig();
+            auto conn = weak_conn.lock();
+            if (!conn || !conn->connected()) {
+              return;
+            }
+            Json::Value payload;
+            payload["type"] = "answer";
+            payload["text"] = reply;
+            conn->send(ToString(payload));
+            if (cfg.attendance_audio_path.empty()) {
+              std::cout << "[Attendance] audio path empty" << std::endl;
+              return;
+            }
+            const std::string audio_bytes = ReadFileBinary(cfg.attendance_audio_path);
+            std::cout << "[Attendance] audio bytes=" << audio_bytes.size()
+                      << " path=" << cfg.attendance_audio_path << std::endl;
+            if (!audio_bytes.empty() && conn && conn->connected()) {
+              conn->send(audio_bytes, drogon::WebSocketMessageType::Binary);
+            } else if (conn && conn->connected()) {
+              Json::Value err;
+              err["type"] = "error";
+              err["error"] = "attendance audio file not found";
+              conn->send(ToString(err));
+            }
+          };
+
+          if (IsAttendanceStart(text) && !session->attendance_mode) {
+            session->attendance_mode = true;
+            session->attendance_started_ms = now;
+            std::cout << "[Attendance] start detected: " << text << std::endl;
+          }
+          if (session->attendance_mode && IsNameCalled(text)) {
+            if (now - session->last_attendance_tts_ms >= 10000) {
+              session->last_attendance_tts_ms = now;
+              std::cout << "[Attendance] name matched -> TTS" << std::endl;
+              send_tts_only("네!");
+            }
+          }
+
           if (session->mode == SessionMode::kNote) {
+            return;
+          }
+          // D 모드(lecture)는 STT만 수행하고 질문/답변/TTS는 하지 않음.
+          if (session->mode != SessionMode::kDefense) {
             return;
           }
 

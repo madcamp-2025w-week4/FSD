@@ -3,7 +3,7 @@
 namespace cd::server {
 
 TriggerEngine::TriggerEngine()
-    : trigger_regex_("(do you know|any questions\\?|알아요)",
+    : trigger_regex_("(do you know|any questions\\?|알아)",
                      std::regex_constants::icase) {}
 
 bool TriggerEngine::IsTriggered(const std::string& transcript) {
