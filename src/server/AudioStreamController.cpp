@@ -793,19 +793,37 @@ void AudioStreamController::handleNewMessage(
               Json::Value system;
               system["role"] = "system";
               system["content"] =
-                  "당신은 학생(사용자)입니다. 교수 질문에 대해 학생이 직접 말하는 짧은 답변만 출력하세요. "
-                  "분석, 설명, 요약, 근거, 추론 과정은 절대 쓰지 마세요. "
-                  "1~2문장, 50자 이내. 한국어로만 답변하세요.";
+                  "당신은 대학 강의를 듣고 있는 학생입니다. "
+                  "교수님이 질문하시면, 방금 들은 수업 내용을 바탕으로 자신있게 답변하세요.\n\n"
+                  "규칙:\n"
+                  "1. 수업에서 언급된 핵심 개념과 용어를 활용하여 답변\n"
+                  "2. 2~3문장, 100자 내외로 답변\n"
+                  "3. '~입니다', '~라고 배웠습니다', '~라고 이해했습니다' 같은 학생 말투 사용\n"
+                  "4. 한국어로만 답변\n\n"
+                  "주의:\n"
+                  "- '네', '알아요', '모르겠어요' 같은 단답은 절대 금지\n"
+                  "- 반드시 수업 내용에서 관련 개념을 찾아서 설명";
               Json::Value user;
               user["role"] = "user";
+              // 테스트용 고정 콘텐츠 (나중에 제거할 것)
+              static const std::string TEST_CONTENT =
+                  "- 프로세스 매니지먼트: 현재 실행 중인 프로그램(프로세스)을 관리합니다. "
+                  "어떤 작업에 우선순위를 둬서 CPU를 빌려줄지 결정하는 스케줄링이 핵심입니다.\n"
+                  "- 메모리 매니지먼트: 각 프로그램이 메모리의 어느 구역을 얼마나 사용할지, "
+                  "그리고 공간이 부족할 때는 어떻게 가상 공간을 활용할지 관리합니다.\n"
+                  "- 파일 시스템 매니지먼트: 데이터를 폴더와 파일 구조로 저장 장치에 보관하고 "
+                  "효율적으로 검색할 수 있게 합니다.\n"
+                  "- I/O 매니지먼트: 모니터, 키보드, 네트워크 카드 같은 입출력 장치들이 "
+                  "본체와 원활하게 소통하도록 돕습니다.";
               user["content"] =
-                  "교수 질문 후보:\n" + prev_block +
-                  "\n\n최근 10분 내용:\n" + context +
-                  "\n\n위 맥락을 참고해서 학생이 교수에게 바로 답하는 한두 문장만 출력하세요.";
+                  "[교수님 질문]\n" + prev_block +
+                  "\n\n[최근 수업 내용]\n" + TEST_CONTENT + "\n" + context +
+                  "\n\n위 수업 내용을 참고하여 교수님 질문에 답변하세요. "
+                  "관련 개념을 포함한 2~3문장으로 답변하세요.";
               messages.append(system);
               messages.append(user);
               req["messages"] = messages;
-              req["temperature"] = 0.6;
+              req["temperature"] = 0.5;
               std::cout << "[LLM] system: " << system["content"].asString() << std::endl;
               std::cout << "[LLM] user: " << user["content"].asString() << std::endl;
 
