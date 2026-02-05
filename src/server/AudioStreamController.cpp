@@ -118,6 +118,7 @@ struct SessionState {
   std::atomic<bool> llm_busy{false};
   std::atomic<bool> classifier_busy{false};
   int64_t last_question_ts = 0;
+  int64_t last_question_suggest_ts = 0;  // "질문 있나요?" 감지 쿨다운
   bool attendance_mode = false;
   int64_t attendance_started_ms = 0;
   int64_t last_attendance_tts_ms = 0;
@@ -181,6 +182,19 @@ bool IsNameCalled(const std::string& text) {
   static const std::vector<std::string> names = {"이상범", "이상 범", "이 상범", "이 상 범", "이. 상. 범.", "이상봉"};
   for (const auto& name : names) {
     if (text.find(name) != std::string::npos) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool IsAskingForQuestions(const std::string& text) {
+  // "질문 있나요?", "질문 있습니까?", "궁금한 점", "질문 있으면" 등 감지
+  static const std::vector<std::string> triggers = {
+    "질문 있나요", "질문 있습니까", "질문있나요", "질문있습니까",
+  };
+  for (const auto& t : triggers) {
+    if (text.find(t) != std::string::npos) {
       return true;
     }
   }
@@ -737,7 +751,129 @@ void AudioStreamController::handleNewMessage(
               session->last_attendance_tts_ms = now;
               std::cout << "[Attendance] name matched -> TTS" << std::endl;
               send_tts_only("네!");
+              // 출석 완료 - 더 이상 출석 모드 아님
+              session->attendance_mode = false;
+              std::cout << "[Attendance] completed, mode off" << std::endl;
+              // 프론트엔드에 출석 완료 알림
+              if (conn && conn->connected()) {
+                Json::Value complete_msg;
+                complete_msg["type"] = "attendance_complete";
+                conn->send(ToString(complete_msg));
+              }
             }
+          }
+
+          // "질문 있나요?" 감지 시 LLM으로 추천 질문 생성
+          if (IsAskingForQuestions(text) && now - session->last_question_suggest_ts > 30000) {
+            session->last_question_suggest_ts = now;
+            std::cout << "[QuestionSuggest] detected: " << text << std::endl;
+            
+            // 비동기로 LLM 호출하여 질문 생성
+            std::thread([session, weak_conn]() {
+              auto conn = weak_conn.lock();
+              if (!conn || !conn->connected()) return;
+              
+              auto& cfg = GetConfig();
+              std::string transcript;
+              {
+                std::lock_guard<std::mutex> lg(session->lock);
+                transcript = JoinText(session->full, 4000);
+              }
+              
+              if (transcript.empty()) {
+                std::cout << "[QuestionSuggest] No transcript to analyze" << std::endl;
+                return;
+              }
+              
+              const std::string QUESTION_PROMPT = R"(
+당신은 대학생을 위한 학습 도우미입니다.
+아래는 수업 내용의 STT 기록입니다. 이 내용을 바탕으로 학생이 교수님께 질문할 만한 좋은 질문 3개를 생성해주세요.
+
+규칙:
+1. 반드시 한국어로 작성하세요.
+2. 각 질문은 새 줄에 "- "로 시작합니다.
+3. 질문은 수업 내용의 핵심 개념을 이해하는 데 도움이 되어야 합니다.
+4. 질문은 간결하게 1-2문장으로 작성하세요.
+
+형식:
+- 첫 번째 추천 질문
+- 두 번째 추천 질문
+- 세 번째 추천 질문
+)";
+              
+              Json::Value req;
+              req["model"] = cfg.llama_model;
+              Json::Value messages(Json::arrayValue);
+              Json::Value system;
+              system["role"] = "system";
+              system["content"] = QUESTION_PROMPT;
+              Json::Value user;
+              user["role"] = "user";
+              user["content"] = "수업 내용:\n" + transcript;
+              messages.append(system);
+              messages.append(user);
+              req["messages"] = messages;
+              req["temperature"] = 0.7;
+              
+              auto request = drogon::HttpRequest::newHttpJsonRequest(req);
+              request->setMethod(drogon::Post);
+              request->setPath("/v1/chat/completions");
+              
+              auto client = drogon::HttpClient::newHttpClient(cfg.llama_base);
+              client->sendRequest(request, [weak_conn](drogon::ReqResult r,
+                                                        const drogon::HttpResponsePtr& resp) {
+                auto conn = weak_conn.lock();
+                if (!conn || !conn->connected()) return;
+                
+                if (r != drogon::ReqResult::Ok || !resp) {
+                  std::cerr << "[QuestionSuggest] LLM request failed" << std::endl;
+                  return;
+                }
+                
+                Json::Value json;
+                std::string err;
+                if (!ParseJson(resp->getBody(), json, err)) {
+                  std::cerr << "[QuestionSuggest] JSON parse error: " << err << std::endl;
+                  return;
+                }
+                
+                const auto& choices = json["choices"];
+                if (!choices.isArray() || choices.empty()) return;
+                
+                std::string content = choices[0u]["message"]["content"].asString();
+                std::cout << "[QuestionSuggest] LLM response: " << content << std::endl;
+                
+                // 질문들을 파싱하여 배열로 만들기
+                Json::Value msg;
+                msg["type"] = "question_suggestions";
+                Json::Value questions(Json::arrayValue);
+                
+                std::istringstream iss(content);
+                std::string line;
+                while (std::getline(iss, line)) {
+                  // "- " 로 시작하는 줄만 추출
+                  size_t pos = line.find("- ");
+                  if (pos != std::string::npos) {
+                    std::string q = line.substr(pos + 2);
+                    // 앞뒤 공백 제거
+                    size_t start = q.find_first_not_of(" \t\r\n");
+                    size_t end = q.find_last_not_of(" \t\r\n");
+                    if (start != std::string::npos && end != std::string::npos) {
+                      questions.append(q.substr(start, end - start + 1));
+                    }
+                  }
+                }
+                
+                if (questions.empty()) {
+                  std::cerr << "[QuestionSuggest] No questions parsed from response" << std::endl;
+                  return;
+                }
+                
+                msg["questions"] = questions;
+                std::cout << "[QuestionSuggest] Sending " << questions.size() << " questions" << std::endl;
+                conn->send(ToString(msg));
+              });
+            }).detach();
           }
 
           auto maybe_answer = [session, text, weak_conn]() {
@@ -804,19 +940,9 @@ void AudioStreamController::handleNewMessage(
                   "- 반드시 수업 내용에서 관련 개념을 찾아서 설명";
               Json::Value user;
               user["role"] = "user";
-              // 테스트용 고정 콘텐츠 (나중에 제거할 것)
-              static const std::string TEST_CONTENT =
-                  "- 프로세스 매니지먼트: 현재 실행 중인 프로그램(프로세스)을 관리합니다. "
-                  "어떤 작업에 우선순위를 둬서 CPU를 빌려줄지 결정하는 스케줄링이 핵심입니다.\n"
-                  "- 메모리 매니지먼트: 각 프로그램이 메모리의 어느 구역을 얼마나 사용할지, "
-                  "그리고 공간이 부족할 때는 어떻게 가상 공간을 활용할지 관리합니다.\n"
-                  "- 파일 시스템 매니지먼트: 데이터를 폴더와 파일 구조로 저장 장치에 보관하고 "
-                  "효율적으로 검색할 수 있게 합니다.\n"
-                  "- I/O 매니지먼트: 모니터, 키보드, 네트워크 카드 같은 입출력 장치들이 "
-                  "본체와 원활하게 소통하도록 돕습니다.";
               user["content"] =
                   "[교수님 질문]\n" + prev_block +
-                  "\n\n[최근 수업 내용]\n" + TEST_CONTENT + "\n" + context +
+                  "\n\n[최근 수업 내용]\n" + "\n" + context +
                   "\n\n위 수업 내용을 참고하여 교수님 질문에 답변하세요. "
                   "관련 개념을 포함한 2~3문장으로 답변하세요.";
               messages.append(system);
