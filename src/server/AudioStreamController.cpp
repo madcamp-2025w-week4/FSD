@@ -171,21 +171,20 @@ std::string JoinText(const std::vector<TranscriptEntry>& entries, size_t max_cha
   return out;
 }
 
-bool LooksAmbiguousQuestion(const std::string& text) {
-  if (text.find('?') != std::string::npos) return true;
-  static const std::vector<std::string> tails = {"까요", "나요", "죠", "죠?", "왜", "어떻게", "뭔가요"};
-  for (const auto& t : tails) {
-    if (text.find(t) != std::string::npos) return true;
-  }
-  return false;
-}
+// Ambiguous-question classification disabled: only explicit trigger keywords activate responses.
 
 bool IsAttendanceStart(const std::string& text) {
   return text.find("출석") != std::string::npos;
 }
 
 bool IsNameCalled(const std::string& text) {
-  return text.find("이상범") != std::string::npos;
+  static const std::vector<std::string> names = {"이상범", "이상 범", "이 상범", "이 상 범", "이. 상. 범.", "이상봉"};
+  for (const auto& name : names) {
+    if (text.find(name) != std::string::npos) {
+      return true;
+    }
+  }
+  return false;
 }
 
 std::string MakeBoundary() {
@@ -720,6 +719,14 @@ void AudioStreamController::handleNewMessage(
             }
           };
 
+          if (session->mode == SessionMode::kNote) {
+            return;
+          }
+          // D 모드(lecture)는 STT만 수행하고 질문/답변/TTS는 하지 않음.
+          if (session->mode != SessionMode::kDefense) {
+            return;
+          }
+
           if (IsAttendanceStart(text) && !session->attendance_mode) {
             session->attendance_mode = true;
             session->attendance_started_ms = now;
@@ -731,14 +738,6 @@ void AudioStreamController::handleNewMessage(
               std::cout << "[Attendance] name matched -> TTS" << std::endl;
               send_tts_only("네!");
             }
-          }
-
-          if (session->mode == SessionMode::kNote) {
-            return;
-          }
-          // D 모드(lecture)는 STT만 수행하고 질문/답변/TTS는 하지 않음.
-          if (session->mode != SessionMode::kDefense) {
-            return;
           }
 
           auto maybe_answer = [session, text, weak_conn]() {
@@ -912,61 +911,6 @@ void AudioStreamController::handleNewMessage(
           if (session->trigger.IsTriggered(text)) {
             std::cout << "[Trigger] keyword matched, text: " << text << std::endl;
             maybe_answer();
-          } else if (LooksAmbiguousQuestion(text) && !session->classifier_busy.exchange(true)) {
-            std::cout << "[Trigger] ambiguous question, running classifier: " << text << std::endl;
-            std::thread([session, text, weak_conn, maybe_answer]() {
-              auto& cfg = GetConfig();
-              auto client = drogon::HttpClient::newHttpClient(cfg.llama_base);
-              Json::Value req;
-              req["model"] = cfg.llama_model;
-              Json::Value messages(Json::arrayValue);
-              Json::Value system;
-              system["role"] = "system";
-              system["content"] =
-                  "Classify if the user message is a professor's question. Reply YES or NO.";
-              Json::Value user;
-              user["role"] = "user";
-              user["content"] = text;
-              messages.append(system);
-              messages.append(user);
-              req["messages"] = messages;
-              req["temperature"] = 0.0;
-
-              auto request = drogon::HttpRequest::newHttpJsonRequest(req);
-              request->setMethod(drogon::Post);
-              request->setPath("/v1/chat/completions");
-
-              std::promise<std::string> promise;
-              client->sendRequest(request, [&promise](drogon::ReqResult r,
-                                                      const drogon::HttpResponsePtr& resp) {
-                if (r != drogon::ReqResult::Ok || !resp) {
-                  promise.set_value("");
-                  return;
-                }
-                Json::Value json;
-                std::string err;
-                if (!ParseJson(resp->getBody(), json, err)) {
-                  promise.set_value("");
-                  return;
-                }
-                const auto& choices = json["choices"];
-                if (!choices.isArray() || choices.empty()) {
-                  promise.set_value("");
-                  return;
-                }
-                promise.set_value(choices[0]["message"]["content"].asString());
-              });
-
-              std::string decision = promise.get_future().get();
-              session->classifier_busy.store(false);
-              if (!decision.empty()) {
-                for (auto& c : decision) c = static_cast<char>(std::toupper(c));
-                if (decision.find("YES") != std::string::npos) {
-                  std::cout << "[Trigger] classifier YES, text: " << text << std::endl;
-                  maybe_answer();
-                }
-              }
-            }).detach();
           }
         });
   };
